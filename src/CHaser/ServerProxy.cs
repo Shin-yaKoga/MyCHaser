@@ -5,7 +5,7 @@
 //
 // Author:      Shin-ya Koga (koga@stprec.co.jp)
 // Created:     Jan. 15, 2015
-// Last update: Jul. 28, 2015
+// Last update: Sep. 06, 2015
 /////////////////////////////////////////////////////////////////////////
 
 using System;
@@ -46,6 +46,7 @@ public class ServerProxy : IDisposable {
 
             // その他のデータメンバを初期化
             mDelimBuf = new byte[2];
+            mSendBuf  = new byte[4];
         } catch (Exception e) {
             Console.Out.WriteLine("caught an exception: {0}", e.Message);
             this.Dispose();
@@ -84,8 +85,9 @@ public class ServerProxy : IDisposable {
             }
 
             // "gr\r\n" を送信 (GetReady)
-            mConnection.Write(GET_READY, 0, GET_READY.Length);
-            mConnection.Write(DELIMITER, 0, DELIMITER.Length);
+            GET_READY.CopyTo(mSendBuf, 0);
+            DELIMITER.CopyTo(mSendBuf, 2);
+            mConnection.Write(mSendBuf, 0, 4);
 
             // 制御情報・周囲情報を受信
             if (! this.RecvResponse(ref outRespCode, outRespBody)) {
@@ -114,8 +116,9 @@ public class ServerProxy : IDisposable {
 
         try {
             // メソッド名と "\r\n" を送信
-            mConnection.Write(method, 0, method.Length);
-            mConnection.Write(DELIMITER, 0, DELIMITER.Length);
+            method.CopyTo(mSendBuf, 0);
+            DELIMITER.CopyTo(mSendBuf, 2);
+            mConnection.Write(mSendBuf, 0, 4);
 
             // 制御情報・周囲情報を受信
             if (! this.RecvResponse(ref outRespCode, outRespBody)) {
@@ -123,10 +126,10 @@ public class ServerProxy : IDisposable {
                 return false;
             }
 
-            // '#' を送信
-            mConnection.WriteByte((byte)'#');
-            // "\r\n" を送信
-            mConnection.Write(DELIMITER, 0, DELIMITER.Length);
+            // '#' と '\r\n' を送信
+            mSendBuf[0] = (byte)'#';
+            DELIMITER.CopyTo(mSendBuf, 1);
+            mConnection.Write(mSendBuf, 0, 3);
         } catch (Exception e) {
             Console.Out.WriteLine("caught an exception: {0}", e.Message);
             Console.Out.WriteLine("at ServerProxy.EndOneTurn().");
@@ -192,8 +195,9 @@ public class ServerProxy : IDisposable {
     }
 
 // データメンバ
-    private NetworkStream    mConnection;    // サーバとのコネクション
-    private byte[]           mDelimBuf;    // "\r\n" の受信用
+    private NetworkStream    mConnection; // サーバとのコネクション
+    private byte[]           mDelimBuf;   // "\r\n" の受信用
+    private byte[]           mSendBuf;    // 送信用のバッファ
 }
 }
 
