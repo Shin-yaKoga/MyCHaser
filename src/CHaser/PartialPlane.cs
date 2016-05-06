@@ -1,15 +1,16 @@
 /////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2014 Something Precious, Inc.
+// Copyright (c) 2014-2016 Something Precious, Inc.
 //
 // PartialPlane.cs: 有限の二次元矩形領域を表現したクラス
 //
 // Author:      Shin-ya Koga (koga@stprec.co.jp)
 // Created:     Dec. 07, 2014
-// Last update: Dec. 09, 2014
+// Last update: May. 07, 2016
 /////////////////////////////////////////////////////////////////////////
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 
 namespace CHaser
@@ -69,13 +70,10 @@ public class PartialPlane<T> {
         }
 
         int dstPos  = (toRight ? this.Width : 0);
-        T[] defVals = new T[diffWidth];
+        T[] defVals = Enumerable.Repeat(mDefVal, diffWidth).ToArray();
 
-        for (int i = 0; i < diffWidth; ++i) {
-            defVals[i] = mDefVal;
-        }
-        for (int i = 0; i < this.Height; ++i) {
-            (mBody[i]).InsertRange(dstPos, defVals);
+        foreach (List<T> row in mBody) {
+            row.InsertRange(dstPos, defVals);
         }
         if (! toRight) {
             mLeftBottomX -= diffWidth;
@@ -91,16 +89,8 @@ public class PartialPlane<T> {
 
         int dstPos  = (toTop ? Height : 0);
         int width   = this.Width;
-        T[] defVals = new T[width];
-
-        for (int i = 0; i < width; ++i) {
-            defVals[i] = mDefVal;
-        }
         for (int i = 0; i < diffHeight; ++i) {
-            List<T> newArray = new List<T>(width);
-
-            newArray.InsertRange(0, defVals);
-            mBody.Insert(dstPos, newArray);
+            mBody.Insert(dstPos, Enumerable.Repeat(mDefVal, width).ToList());
         }
         if (! toTop) {
             mLeftBottomY -= diffHeight;
