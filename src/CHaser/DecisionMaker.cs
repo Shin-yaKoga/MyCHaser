@@ -1,11 +1,11 @@
 ﻿/////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2014-2015 Something Precious, Inc.
+// Copyright (c) 2014-2016 Something Precious, Inc.
 //
 // DecisionMaker.cs: 次に実行するコマンドの導出用
 //
 // Author:      Shin-ya Koga (koga@stprec.co.jp)
 // Created:     Dec. 23, 2014
-// Last update: Jul. 31, 2015
+// Last update: May. 07, 2016
 /////////////////////////////////////////////////////////////////////////
 
 using System;
@@ -80,8 +80,8 @@ public abstract class DecisionMaker : IDecisionMaker {
         List<Command> ioCandidates, FloorMap map)
     {
         // 候補が一つに絞られるまで繰り返し
-        for (int i = 0; i < mActionSelectors.Count; ++i) {
-            mActionSelectors[i].Select(mCommandList, map);
+        foreach (IActionSelector selector in mActionSelectors) {
+            selector.Select(mCommandList, map);
             if (1 == mCommandList.Count) {
                 break;  // 候補が決まった
             }

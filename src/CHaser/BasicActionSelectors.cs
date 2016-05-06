@@ -1,11 +1,11 @@
 /////////////////////////////////////////////////////////////////////////
-// Copyright (c) 2014-2015 Something Precious, Inc.
+// Copyright (c) 2014-2016 Something Precious, Inc.
 //
 // BasicIActionSelectors.cs: IActionSelector インタフェースの基本実装群
 //
 // Author:      Shin-ya Koga (koga@stprec.co.jp)
 // Created:     Dec. 31, 2014
-// Last update: Jul. 31, 2015
+// Last update: May. 07, 2016
 /////////////////////////////////////////////////////////////////////////
 
 using System.Collections.Generic;
@@ -146,9 +146,8 @@ public class AdjacentItem : IActionSelector {
         }
 
         // 進行先を囲むセル中のブロック数を算出
-        for (int i = 0, n = 3; i < n; ++i) {
-            if (FloorMap.CellStat.BLOCK ==
-                    map.GetCellStat(around[i].x, around[i].y)) {
+        foreach (Point p in around) {
+            if (FloorMap.CellStat.BLOCK == map.GetCellStat(p.x, p.y)) {
                 ++numSorroundBlock;
             }
         }
@@ -205,7 +204,6 @@ public class PreferFirstTime : IActionSelector
 
         for (int i = 0; i < altActions.Count; ++i) {
             Command c2 = altActions[i];
-
             if (visitCount <= map.GetVisitCount(c2.NextRelPosX, c2.NextRelPosY)) {
                 altActions.Insert(i, c);
                 return;
