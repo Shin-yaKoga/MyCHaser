@@ -40,9 +40,7 @@ public class BasicDecisionMaker : DecisionMaker {
             // 前回実行したアクションが非移動の場合、今回も同じかチェック
             if (!mLastAction.IsWalk && mLastAction == ioCandidates[0]) {
                 // 同じ場合、移動アクションを選択可能なら選択
-                for (int i = 0; i < ioCandidates.Count; ++i) {
-                    Command c = ioCandidates[i];
-
+                foreach (Command c in ioCandidates) {
                     if (c.IsWalk) {
                         ioCandidates.Clear();
                         ioCandidates.Add(c);
@@ -52,9 +50,7 @@ public class BasicDecisionMaker : DecisionMaker {
             } else if (mLastAction.IsWalk && !ioCandidates[0].IsWalk
                 && !ioCandidates[0].IsPut) {
                 // 前回実行したアクションが移動で、今回は探索が候補の場合は調整
-                for (int i = 0; i < ioCandidates.Count; ++i) {
-                    Command c = ioCandidates[i];
-
+                foreach (Command c in ioCandidates) {
                     if (mLastAction.GetDir() == c.GetDir()) {
                         ioCandidates.Clear();
                         ioCandidates.Add(c);
